@@ -36,6 +36,10 @@ declare global {
 const jobs = globalThis.redditGalleryJobs ?? new Map<string, InternalJob>();
 globalThis.redditGalleryJobs = jobs;
 
+// gallery-dl's built-in Reddit "installed app" client. Supplying it switches
+// the extractor away from Reddit's frequently blocked public .json endpoint.
+const defaultRedditClientId = "6N9uN0krSDE-ig";
+
 export const defaultDestination = path.join(
   os.homedir(),
   "Downloads",
@@ -109,6 +113,10 @@ export async function createJob(options: JobOptions): Promise<PublicJob> {
   const args = [
     "--no-input",
     "--no-colors",
+    "--option",
+    `extractor.reddit.client-id=${
+      process.env.REDDIT_CLIENT_ID?.trim() || defaultRedditClientId
+    }`,
     "--destination",
     destination,
     "--post-range",
@@ -118,6 +126,13 @@ export async function createJob(options: JobOptions): Promise<PublicJob> {
     "--Print",
     "after:SAVED|{_path}",
   ];
+
+  if (process.env.REDDIT_USER_AGENT?.trim()) {
+    args.push(
+      "--option",
+      `extractor.reddit.user-agent=${process.env.REDDIT_USER_AGENT.trim()}`,
+    );
+  }
 
   if (options.archive) {
     args.push("--download-archive", path.join(destination, ".gallery-dl-archive"));

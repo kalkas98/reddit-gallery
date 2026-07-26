@@ -19,5 +19,10 @@ The app listens on all network interfaces, launches `gallery-dl` directly
 (without a shell), and keeps job state in memory. Downloaded files and the
 optional archive are written to the folder you choose in the interface.
 
+Reddit requests use gallery-dl's built-in public OAuth client instead of the
+often-blocked public `.json` endpoint. To use your own Reddit installed-app
+credentials, set `REDDIT_CLIENT_ID` and optionally `REDDIT_USER_AGENT` before
+starting the app.
+
 There is no login screen. Only run the app on a trusted home network, because
 any device that can reach port 3000 can start and cancel downloads.
